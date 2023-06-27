@@ -1,13 +1,13 @@
+'use service'
 import { UserData } from "@/models/user.model";
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import * as serverService from "@/services/serverService";
 import { RootState } from "@/store/store";
 import { AxiosRequestConfig } from "axios";
 import httpClient from "@/utils/httpClient";
-import { useRouter } from 'next/navigation';
+// import Router from "next/navigation"; 
 import { ROUTER } from "@/utils/constant";
-
-
+import { useRouter } from "next/navigation";
 interface UserState {
   username: string;
   accessToken: string;
@@ -39,8 +39,6 @@ export const signIn = createAsyncThunk(
   async (credential: SignAction) => {
     const response: any = await serverService.signIn(credential);
 
-    console.log("-- userslice --", response);
-  
     if (response.code != 200) {
       throw new Error("login failed");
     }
@@ -48,7 +46,9 @@ export const signIn = createAsyncThunk(
     // set access token
     httpClient.interceptors.request.use((config?: AxiosRequestConfig): any => {
       if (config && config.headers) {
-        config.headers["Authorization"] = `Bearer ${response.result.access_token}`;
+        config.headers[
+          "Authorization"
+        ] = `Bearer ${response.result.access_token}`;
       }
 
       return config;
@@ -60,9 +60,29 @@ export const signIn = createAsyncThunk(
 
 export const signOut = createAsyncThunk("user/signout", async () => {
   await serverService.signOut();
-  const router = useRouter();
-  router.push('/signin');
+  // const router = useRouter();
+  // router.push("/signin");
+  window.location.href = `${process.env.BASE_URL_LOCAL}${ROUTER.SIGN_IN}`;
 });
+
+// export const getSession = createAsyncThunk("user/fetchSession", async () => {
+//   const response = await serverService.getSession();
+
+//   console.log("response", response);
+  
+
+//   // set access token
+//   if (response) {
+//     httpClient.interceptors.request.use((config?: AxiosRequestConfig): any => {
+//       if (config && config.headers && response.user) {
+//         config.headers["Authorization"] = `Bearer ${response.user?.token}`;
+//       }
+//       return config;
+//     });
+//   }
+//   return response;
+// });
+
 
 const userSlice = createSlice({
   name: "user",
@@ -73,7 +93,7 @@ const userSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(signIn.fulfilled, (state, action) => {      
+    builder.addCase(signIn.fulfilled, (state, action) => {
       state.accessToken = action.payload.result.access_token;
       state.isAuthenticated = true;
       state.isAuthenticating = false;
@@ -91,6 +111,14 @@ const userSlice = createSlice({
       state.isAuthenticating = false;
       state.user = undefined;
     });
+    // builder.addCase(getSession.fulfilled, (state, action) => {
+    //   state.isAuthenticating = false;
+    //   if (action.payload && action.payload.user && action.payload.user.token) {
+    //     state.accessToken = action.payload.user.token;
+    //     state.user = action.payload.user;
+    //     state.isAuthenticated = true;
+    //   }
+    // });
   },
 });
 

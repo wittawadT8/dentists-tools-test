@@ -1,22 +1,19 @@
-import { ROUTER } from "@/utils/constant";
+import { BASE_URL_LOCAL, ROUTER } from "@/utils/constant";
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const Modified = new Date();
-  const BaseUrl = process.env.NEXT_PUBLIC_BASE_URL_LOCAL;
-
   return [
     {
-      url: `${BaseUrl}`,
-      lastModified: Modified,
+      url: `${BASE_URL_LOCAL}`,
+      lastModified: new Date(),
     },
     {
-      url: `${BaseUrl}${ROUTER.ABOUT_US}`,
-      lastModified: Modified,
+      url: `${BASE_URL_LOCAL}${ROUTER.ABOUT_US}`,
+      lastModified: new Date(),
     },
     {
-      url: `${BaseUrl}${ROUTER.CONTACT_US}`,
-      lastModified: Modified,
+      url: `${BASE_URL_LOCAL}${ROUTER.CONTACT_US}`,
+      lastModified: new Date(),
     },
   ];
 }

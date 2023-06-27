@@ -5,6 +5,14 @@ import { Inter } from "next/font/google";
 import Header from "@/components/Header";
 import ReduxProvider from "@/store/provider";
 import { Providers } from "./providers";
+import React from "react";
+import { AuthSession } from "./session";
+import { useSelector } from "react-redux";
+import {
+  isAuthenticatedSelector,
+  isAuthenticatingSelector,
+} from "@/store/slices/userSlice";
+import InjectTailwind from "./InjectTailwind";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -27,14 +35,20 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className} suppressHydrationWarning>
-        <ReduxProvider>
-          <Providers>
-            <Header />
-            {children}
-          </Providers>
-        </ReduxProvider>
-      </body>
+      <ReduxProvider>
+        {/* <AuthSession> */}
+          {/* <InjectTailwind> */}
+            <Providers>
+              <body id="__next" className={inter.className} suppressHydrationWarning>
+
+                <Header />
+                {children}
+
+              </body>
+            </Providers>
+          {/* </InjectTailwind> */}
+        {/* </AuthSession>ห */}
+      </ReduxProvider>
     </html>
   );
 }
